@@ -1,0 +1,67 @@
+/* Motion changes opacity and composition only, never document flow or scrolling.
+   No hidden initial state: failures leave every section readable. */
+@keyframes entrance {
+  from { opacity: .15; translate: 0 12px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes answer-enter {
+  from { opacity: .35; translate: 0 -4px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes contact-accent {
+  0%, 100% { box-shadow: 0 3px 16px #0002; }
+  45% { box-shadow: 0 3px 16px #0002, 0 0 0 5px #24625424; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .motion-enter {
+    animation: entrance 380ms cubic-bezier(.22, 1, .36, 1) var(--entrance-delay, 0ms) backwards;
+  }
+  /* Keyboard focus must never wait for an entrance to finish. */
+  .motion-enter:focus-within { animation: none; }
+  .button, .service {
+    transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  }
+  .button svg, .service-link svg, .text-link svg, .service-strip a svg {
+    transition: transform 180ms ease;
+  }
+  .text-link { transition: opacity 180ms ease; }
+  .floating {
+    animation: contact-accent 1000ms ease-out 650ms 1;
+    transition: box-shadow 180ms ease, transform 180ms ease;
+  }
+  details[open] > p { animation: answer-enter 180ms ease-out; }
+  .menu svg { animation: answer-enter 140ms ease-out; }
+  @media (hover: hover) and (pointer: fine) {
+    .button:hover, .service:hover { box-shadow: 0 7px 18px #102e380b; }
+    .button:hover svg, .service:hover .service-link svg, .text-link:hover svg {
+      transform: translate(2px, -2px);
+    }
+    .service-strip a:hover svg { transform: translateX(3px); }
+    .floating:hover { transform: translateY(-2px); box-shadow: 0 5px 20px #102e3830; }
+  }
+  @media (max-width: 700px) {
+    .motion-enter { animation-duration: 300ms; }
+  }
+}
+@media (max-width: 700px) {
+  .nav, .nav.open { display: flex; flex-direction: column; gap: 0; }
+  .nav {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 160ms ease, transform 160ms ease, visibility 0s linear 160ms;
+  }
+  .nav.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-enter { opacity: 1; translate: none; }
+  .nav, .nav.open { transform: none; }
+  .button:hover, .service:hover, .floating:hover { transform: none; }
+}
